@@ -1,6 +1,6 @@
 """Main"""
 # Flask
-from flask import Flask, render_template,request
+from flask import Flask, render_template,request, redirect, url_for
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -16,8 +16,9 @@ class Task(db.Model):
 
 @app.route('/')
 #  Ruta raiz
-def hello_world():
-    return render_template('index.html')  # Colocamos entre comillas simples el nombre del archivo html
+def home():
+    tasks = Task.query.all()
+    return render_template('index.html', tasks = tasks)  # Colocamos entre comillas simples el nombre del archivo html
     # Por defecto Flask buscara las plantillas en la carpeta de nombre templates que este al nivel del archivo controlador(app.py)
 
 @app.route('/create-task',methods=['POST'])
@@ -25,9 +26,14 @@ def create():
     """Crear Tareas"""
     task = Task(content=request.form['tarea'], done=False)
     db.session.add(task)  # Agregamos un nuevo dato a la base de datos.
-    db.session.commit()  # Terminamos la consulta y guarda el dato
-    return 'guardado'  # Devolvemos una respuesta al navegador con el mensaje 'guardado'
+    db.session.commit()  # Especificamos a la DB que terminamos de hacer operaciones
+    return redirect(url_for('home'))  # Redireccionamos a la ruta raiz usando jinja2, tambien funciona asi redirect('/')
 
+@app.route('/delete/<id>')  # Colocamos el id entre corchetes indicando que se debe enviar como parametro
+def delete(id: int):
+    task = Task.query.filter_by(id=int(id)).delete()  # Buscamos la traera y lo eliminamos.
+    db.session.commit()
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)  # Colocamos degug = True para que nuestro servidor se reinicia cada vez que guardamos cambios
