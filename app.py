@@ -29,8 +29,14 @@ def create():
     db.session.commit()  # Especificamos a la DB que terminamos de hacer operaciones
     return redirect(url_for('home'))  # Redireccionamos a la ruta raiz usando jinja2, tambien funciona asi redirect('/')
 
+@app.route('/done/<id>')
+def done(id):
+    task = Task.query.filter_by(id=int(id)).first()
+    task.done = not(task.done)  # Invertimos el valor por cada llamada.
+    db.session.commit()
+    return redirect(url_for('home'))
 @app.route('/delete/<id>')  # Colocamos el id entre corchetes indicando que se debe enviar como parametro
-def delete(id: int):
+def delete(id):
     task = Task.query.filter_by(id=int(id)).delete()  # Buscamos la traera y lo eliminamos.
     db.session.commit()
     return redirect(url_for('home'))

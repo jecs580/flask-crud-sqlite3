@@ -24,7 +24,8 @@
                         <form action="/create-task" method="POST">
                             <!-- Llamamos al endpoint '/craete-task' -->
                             <div class="form-group">
-                                <input type="text" name="tarea" placeholder="Tarea" class="form-control" autofocus id="">
+                                <input type="text" name="tarea" placeholder="Tarea" class="form-control" autofocus
+                                    id="">
                             </div>
                             <button type="submit" class="btn btn-primary btn-block">Guardar</button>
                         </form>
@@ -32,11 +33,15 @@
                     <div class="card-body">
                         <ul class="list-group">
                             {% for task in tasks %}
-                                <li class="list-group-item">
+                            <li class="list-group-item">
+                                <span class="{% if task.done %}
+                                                done
+                                            {% endif %}">
                                     {{task.content}}
-                                    <a href="" class="btn btn-success btn-sm">Completo</a>
-                                    <a href="/delete/{{task.id}}" class="btn btn-danger btn-sm">Eliminar</a>
-                                </li>
+                                </span>
+                                <a href="/done/{{task.id}}" class="btn btn-success btn-sm">Completo</a>
+                                <a href="/delete/{{task.id}}" class="btn btn-danger btn-sm">Eliminar</a>
+                            </li>
                             {% endfor %}
                         </ul>
                     </div>
